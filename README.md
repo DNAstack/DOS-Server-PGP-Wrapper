@@ -1,25 +1,22 @@
-# DOS-Server-PGP-Wrapper
-Uploads public PGP Canada Data to a DOS Server.
+# DOS PGP Loader
+Uploads public [PGP Canada](https://personalgenomes.ca/data) Data to a DOS Server.
 
 ## Usage
 
-First have a dos server running on http://localhost:8080/. My implementation can be found [here](https://github.com/ekeilty17/GA4GH-DOS-Server). **Note:** Make sure the KeyCloak security is turned off.
+First have a dos server running on http://localhost:8101/. These instructions are tested against the
+[DNAstack DOS server](https://github.com/DNAstack/GA4GH-DOS-Server) created under Google Summer of Code.
 
-Make sure you are usig Java 1.8
+Run the GCS data loader:
 ```
-javac -version
-```
-
-Use the Maven plugin
-```
-
-mvn clean spring-boot:run
-
+DOS_SERVER_URL=http://localhost:8101 \
+DOS_SERVER_USERNAME=dosadmin \
+DOS_SERVER_PASSWORD=dosadmin \
+mvn exec:java
 ```
 
 To see if it worked, execute:
 ```
-$ curl http://localhost:8080/dataobjects
-$ curl http://localhost:8080/databundles
+$ curl http://localhost:8101/dataobjects
+$ curl http://localhost:8101/databundles
 ```
 This should display the objects that have been added to the database

@@ -1,23 +1,50 @@
 package com.dnastack.pgp;
 
-import com.dnastack.pgp.http.PGPHttp;
+import com.dnastack.pgp.client.DosClient;
+import com.dnastack.pgp.client.PgpWebsiteScraper;
+import com.dnastack.pgp.model.Ga4ghDataObject;
 
 import java.io.IOException;
-
-import org.json.JSONArray;
+import java.net.URI;
+import java.util.List;
 
 public class PGPWrapper 
 {
 	public static void main( String[] args ) throws IOException
     {
-    	PGPHttp pgpHttp = new PGPHttp();
+		String serverUrl = requiredEnv("DOS_SERVER_URL");
+		if (!serverUrl.endsWith("/")) {
+			serverUrl += "/";
+		}
+
+		DosClient dosClient = new DosClient(
+				URI.create(serverUrl),
+				requiredEnv("DOS_SERVER_USERNAME"),
+				requiredEnv("DOS_SERVER_PASSWORD"));
+
+    	PgpWebsiteScraper pgpHttp = new PgpWebsiteScraper();
+
+		List<Ga4ghDataObject> allData = pgpHttp.getData();
+		System.out.printf("Found %d data objects on PGP website\n\n", allData.size());
+
+		for (Ga4ghDataObject dataObject : allData) {
+			dosClient.postDataObject(dataObject);
+		}
+		System.out.println("Finished posting objects to DOS server\n\n");
 		
-		JSONArray allData = pgpHttp.getData();
-		pgpHttp.postDataObjects(allData, "http://localhost:8080/dataobjects");
-		System.out.println("Number of elements added: " + allData.length() + "\n\n");
-		
-		pgpHttp.postDataBundles(allData, "http://localhost:8080/databundles");
-    	System.out.println("Data Bundles added" + "\n\n");
+//		dosClient.postDataBundles(allData, "http://localhost:8080/databundles");
+//    	System.out.println("Data Bundles added" + "\n\n");
 		
     }
+
+
+	private static String requiredEnv(String name) {
+		String value = System.getenv(name);
+		if (value == null) {
+			System.err.println("Missing required environment variable " + name);
+			System.exit(1);
+		}
+		return value;
+	}
+
 }

@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class URL {
+public class DosUrl {
 	
 	private String url;
 	private Map<String, String> system_metadata;
