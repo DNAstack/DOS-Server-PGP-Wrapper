@@ -124,7 +124,7 @@ public class PgpWebsiteScraper {
                 .filter(file -> !file.getFileType().equals("INTEGRITY_HASH"))
                 .map(file -> new Ga4ghDataObject(
                         stringOrNull(file.getId()),
-                        downloadUrl(file),
+                        file.getFilename(),
                         stringOrNull(file.getFileSize()),
                         stringOrNull(file.getCreatedAt()),
                         stringOrNull(file.getLastModificationAt() != null ? file.getLastModificationAt() : file.getCreatedAt()),
@@ -134,7 +134,7 @@ public class PgpWebsiteScraper {
                                 ? ImmutableList.of(new Checksum(hashes.get(file.getFilename()), Checksum.Type.md5))
                                 : ImmutableList.of(),
                         ImmutableList.of(new DosUrl(
-                                file.getFilename(),
+                                downloadUrl(file),
                                 ImmutableMap.of(),
                                 ImmutableMap.of())),
                         file.getFilename() + " (PGP Participant " + file.getParticipant().getAssignedIdentityNumber() + ")",
